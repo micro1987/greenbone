@@ -7,7 +7,7 @@ metadata:
 spec:
   generators:
     - git:
-        repoURL: https://git-infra.agesic.red.uy/agesic/cerberous.git
+        repoURL: https://github.com/micro1987/greenbone.git
         revision: HEAD
         directories:
         - path: k8s-manifests/apps/*/environments/prod/openshift/te
@@ -19,7 +19,7 @@ spec:
       project: greenbone
       source:
         path: "{{path}}"
-        repoURL: https://git-infra.agesic.red.uy/agesic/cerberous.git
+        repoURL: https://github.com/micro1987/greenbone.git
         targetRevision: HEAD
       destination: 
         namespace: "greenbone-{{path[4]}}"
