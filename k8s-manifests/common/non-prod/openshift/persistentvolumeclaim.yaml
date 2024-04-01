@@ -3,4 +3,4 @@ kind: PersistentVolumeClaim
 metadata:
   name: volume-tmp
 spec:
-  storageClassName: st-openshift-apps-dev
+  storageClassName: managed-nfs-storage
