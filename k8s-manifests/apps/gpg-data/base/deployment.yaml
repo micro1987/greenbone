@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gpg-data
+spec:
+  selector:
+    matchLabels:
+      app: gpg-data
+  replicas: 0
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: gpg-data
+    spec:
+      containers:
+      - name: gpg-data
+        image: greenbone/gpg-data
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 150m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File       
+        volumeMounts:
+            - mountPath: /mnt
+              name: gpg-data-vol
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: gpg-data-vol
+          persistentVolumeClaim:
+            claimName: gpg-data-vol
+
+

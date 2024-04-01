@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: redis-server
+spec:
+  selector:
+    matchLabels:
+      app: redis-server
+  replicas: 0
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: redis-server
+    spec:
+      containers:
+      - name: redis-server
+        image: greenbone/redis-server
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 150m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File       
+        volumeMounts:
+            - mountPath: /run/redis/
+              name: redis-socket-vol
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: redis-socket-vol
+          persistentVolumeClaim:
+            claimName: redis-socket-vol
+
+

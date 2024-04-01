@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+
+namespace: greenbone-prod
+namePrefix: prod-
+commonLabels:
+  app: redis-server
+  environment: prod
+
+resources:
+- ../../../../base
+
+components:
+- ../../base
+#- ../../../../../../variants/redis-server/prod/openshift/te
+- ../../../../../../common/prod/openshift/
+  
+
+images:
+- name: greenbone/redis-server
+  newTag: "latest"
+
+replicas:
+- count: 1
+  name: redis-server

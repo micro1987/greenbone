@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: Service
+metadata: 
+  name: gsa
+spec:
+  ports:
+  - name: 9392-tcp
+    port: 9392
+    protocol: TCP
+    targetPort: 9392
+  selector:
+    app: gsa
+  sessionAffinity: None
+  type: ClusterIP
+ 

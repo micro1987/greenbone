@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+
+namespace: greenbone-prod
+namePrefix: prod-
+commonLabels:
+  app: ospd-openvas
+  environment: prod
+
+resources:
+- ../../../../base
+
+components:
+- ../../base
+#- ../../../../../../variants/ospd-openvas/prod/openshift/te
+- ../../../../../../common/prod/openshift/
+  
+
+images:
+- name: greenbone/ospd-openvas
+  newTag: "stable"
+
+replicas:
+- count: 1
+  name: ospd-openvas

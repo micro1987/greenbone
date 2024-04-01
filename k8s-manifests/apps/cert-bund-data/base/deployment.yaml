@@ -1,0 +1,43 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cert-bund-data
+spec:
+  selector:
+    matchLabels:
+      app: cert-bund-data
+  replicas: 0
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: cert-bund-data
+    spec:
+      containers:
+      - name: cert-bund-data
+        image: greenbone/cert-bund-data
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 150m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File       
+        volumeMounts:
+            - mountPath: /mnt
+              name: cert-data-vol
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: cert-data-vol
+          persistentVolumeClaim:
+            claimName: cert-data-vol
+
+

@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gvm-tools
+spec:
+  selector:
+    matchLabels:
+      app: gvm-tools
+  replicas: 0
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: gvm-tools
+    spec:
+      containers:
+      - name: gvm-tools
+        image: greenbone/gvm-tools
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 150m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File       
+        volumeMounts:
+            - mountPath: /run/gvmd
+              name: gvmd-socket-vol
+            - mountPath: /run/ospd
+              name: gvmd-data-vol
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: gvmd-socket-vol
+          persistentVolumeClaim:
+            claimName: gvmd-socket-vol
+        - name: gvmd-data-vol
+          persistentVolumeClaim:
+            claimName: gvmd-data-vol
+
+

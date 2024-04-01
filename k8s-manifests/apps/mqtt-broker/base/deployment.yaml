@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mqtt-broker
+spec:
+  selector:
+    matchLabels:
+      app: mqtt-broker
+  replicas: 0
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: mqtt-broker
+    spec:
+      containers:
+      - name: mqtt-broker
+        image: greenbone/mqtt-broker
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 150m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File       
+      dnsPolicy: ClusterFirst
+      imagePullSecrets:
+      - name: gitlab-docker-registry
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30

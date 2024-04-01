@@ -1,0 +1,46 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gsa
+spec:
+  selector:
+    matchLabels:
+      app: gsa
+  replicas: 0
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: gsa
+    spec:
+      containers:
+      - name: gsa
+        image: greenbone/gsa
+        imagePullPolicy: IfNotPresent
+        ports:        
+          - containerPort: 80
+            protocol: TCP
+        resources:
+          limits:
+            cpu: 150m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File       
+        volumeMounts:
+            - mountPath: /run/gvmd
+              name: gvmd-socket-vol
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: gvmd-socket-vol
+          persistentVolumeClaim:
+            claimName: gvmd-socket-vol
+
+

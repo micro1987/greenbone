@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+
+namespace: greenbone-prod
+namePrefix: prod-
+commonLabels:
+  app: gvmd
+  environment: prod
+
+resources:
+- ../../../../base
+
+components:
+- ../../base
+#- ../../../../../../variants/gvmd/prod/openshift/te
+- ../../../../../../common/prod/openshift/
+  
+
+images:
+- name: greenbone/gvmd
+  newTag: "stable"
+
+replicas:
+- count: 1
+  name: gvmd

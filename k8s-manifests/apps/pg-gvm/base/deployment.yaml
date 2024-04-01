@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pg-gvm
+spec:
+  selector:
+    matchLabels:
+      app: pg-gvm
+  replicas: 0
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: pg-gvm
+    spec:
+      containers:
+      - name: pg-gvm
+        image: greenbone/pg-gvm
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 150m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File       
+        volumeMounts:
+            - mountPath: /var/lib/postgresql
+              name: psql-data-vol
+            - mountPath: /var/run/postgresql
+              name: psql-socket-vol
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: psql-data-vol
+          persistentVolumeClaim:
+            claimName: psql-data-vol
+        - name: psql-socket-vol
+          persistentVolumeClaim:
+            claimName: psql-socket-vol
+
+

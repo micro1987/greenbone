@@ -1,0 +1,25 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+
+namespace: greenbone-prod
+namePrefix: prod-
+commonLabels:
+  app: report-formats
+  environment: prod
+
+resources:
+- ../../../../base
+
+components:
+- ../../base
+#- ../../../../../../variants/report-formats/prod/openshift/te
+  
+
+images:
+- name: greenbone/report-formats
+  newTag: "latest"
+
+replicas:
+- count: 1
+  name: report-formats

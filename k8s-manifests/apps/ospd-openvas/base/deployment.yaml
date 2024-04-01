@@ -1,0 +1,79 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ospd-openvas
+spec:
+  selector:
+    matchLabels:
+      app: ospd-openvas
+  replicas: 0
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: ospd-openvas
+    spec:
+      containers:
+      - name: ospd-openvas
+        image: greenbone/ospd-openvas
+        imagePullPolicy: IfNotPresent
+        ports:        
+          - containerPort: 80
+            protocol: TCP
+        resources:
+          limits:
+            cpu: 150m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        command:
+         - ospd-openvas
+         - '-f'
+         - >- 
+           --config
+           /etc/gvm/ospd-openvas.conf
+           --mqtt-broker-address
+           mqtt-broker
+           --notus-feed-dir
+           /var/lib/notus/advisories
+         - '-m'
+         - >- 
+           666
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File       
+        volumeMounts:
+            - mountPath: /etc/openvas/gnupg
+              name: gpg-data-vol
+            - mountPath: /var/lib/openvas/plugins
+              name: vt-data-vol
+            - mountPath: /var/lib/notus
+              name: notus-data-vol
+            - mountPath: /run/ospd
+              name: ospd-openvas-socket-vol
+            - mountPath: /run/redis/
+              name: redis-socket-vol
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: gpg-data-vol
+          persistentVolumeClaim:
+            claimName: gpg-data-vol
+        - name: vt-data-vol
+          persistentVolumeClaim:
+            claimName: vt-data-vol
+        - name: notus-data-vol
+          persistentVolumeClaim:
+            claimName: notus-data-vol
+        - name: ospd-openvas-socket-vol
+          persistentVolumeClaim:
+            claimName: ospd-openvas-socket-vol
+        - name: redis-socket-vol
+          persistentVolumeClaim:
+            claimName: redis-socket-vol
+
+

@@ -1,0 +1,32 @@
+apiVersion: kustomize.config.k8s.io/v1alpha1
+kind: Component
+
+patches: 
+
+   
+  ### DEPLOYMENT RESOURCES ###
+  - target:
+      kind: Deployment
+      name: notus-data
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/cpu
+        value: 150m
+  - target:
+      kind: Deployment
+      name: notus-data
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/containers/0/resources/limits/memory
+        value: 256Mi
+
+#  ### VOLUMES ###
+  - target:
+      kind: Deployment
+      name: notus-data
+    patch: |-
+      - op: replace
+        path: /spec/template/spec/volumes/0/persistentVolumeClaim/claimName
+        value: prod-notus-data-vol
+
+

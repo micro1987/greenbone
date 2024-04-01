@@ -1,0 +1,26 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+
+namespace: greenbone-prod
+namePrefix: prod-
+commonLabels:
+  app: scap-data
+  environment: prod
+
+resources:
+- ../../../../base
+
+components:
+- ../../base
+#- ../../../../../../variants/scap-data/prod/openshift/te
+- ../../../../../../common/prod/openshift/
+  
+
+images:
+- name: greenbone/scap-data
+  newTag: "latest"
+
+replicas:
+- count: 1
+  name: scap-data

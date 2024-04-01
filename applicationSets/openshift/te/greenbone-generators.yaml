@@ -1,0 +1,26 @@
+---
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: prod-greenbone
+  namespace: argocd
+spec:
+  generators:
+    - git:
+        repoURL: https://git-infra.agesic.red.uy/agesic/cerberous.git
+        revision: HEAD
+        directories:
+        - path: k8s-manifests/apps/*/environments/prod/openshift/te
+  template:
+    metadata:
+      namespace: argocd
+      name: "{{path[4]}}-greenbone-{{path[2]}}"
+    spec:
+      project: greenbone
+      source:
+        path: "{{path}}"
+        repoURL: https://git-infra.agesic.red.uy/agesic/cerberous.git
+        targetRevision: HEAD
+      destination: 
+        namespace: "greenbone-{{path[4]}}"
+        server: https://kubernetes.default.svc

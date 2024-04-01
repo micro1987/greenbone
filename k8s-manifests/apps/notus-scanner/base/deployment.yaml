@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: notus-scanner
+spec:
+  selector:
+    matchLabels:
+      app: notus-scanner
+  replicas: 0
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: notus-scanner
+    spec:
+      containers:
+      - name: notus-scanner
+        image: greenbone/notus-scanner
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            cpu: 150m
+            memory: 256Mi
+          requests:
+            cpu: 10m
+            memory: 100Mi
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File       
+        volumeMounts:
+            - mountPath: /var/lib/notus
+              name: notus-data-vol
+            - mountPath: /etc/openvas/gnupg
+              name: gpg-data-vol
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+      securityContext: {}
+      terminationGracePeriodSeconds: 30
+      volumes:
+        - name: notus-data-vol
+          persistentVolumeClaim:
+            claimName: notus-data-vol
+        - name: gpg-data-vol
+          persistentVolumeClaim:
+            claimName: gpg-data-vol
+
+
